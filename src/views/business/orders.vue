@@ -1,15 +1,25 @@
 <template>
-
+  <div class="business-orders">
+    <el-card v-for="order in orders" :key="order">
+      {{ order.id }}
+      {{ order.totPrice}}
+      {{ order.customerId }}
+      {{ order.status }}
+      <el-button type="primary" @click="handleConfirmClick(order.id)"></el-button>
+      <el-button type="danger" @click="handleCancelClick(order.id)"></el-button>
+    </el-card>
+  </div>
 </template>
 
 <script>
 import businessApi from '@/api/business'
+import axios from 'axios'
 
 export default {
   name: 'Orders',
   data() {
     return {
-      shopId: '',
+      shopId: this.$store.getters.shopId,
       orderId: '',
       customerId: '',
       totPrice: '',
@@ -23,16 +33,16 @@ export default {
   },
   methods: {
     getallOrders() {
-      businessApi.getOrder(this.$store.state.shopId).then(res => {
+      axios.get('/order/getShopOrder', this.shopId).then(res => {
         this.orders = res.data
       })
     },
-    handleConfirmClick() {
-      businessApi.confirmOrder(this.orderId)
+    handleConfirmClick(orderId) {
+      axios.put('/order/confirmOrder', orderId)
       this.getallOrders()
     },
-    handleCancelClick() {
-      businessApi.cancelOrder(this.orderId)
+    handleCancelClick(orderId) {
+      axios.put('/order/cancelOrder', orderId)
       this.getallOrders()
     }
   }
