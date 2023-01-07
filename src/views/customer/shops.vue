@@ -1,9 +1,15 @@
 <template>
-
+  <div class="customer-shops" style="padding-top: 20px">
+    <el-card v-for="shop in shops" :key="shop" style="margin-bottom: 10px">
+      {{ shop.name }}
+      {{ shop.location }}
+      <el-button type="primary" @click="handleClick(shop.id)">进店</el-button>
+    </el-card>
+  </div>
 </template>
 
 <script>
-import customerApi from '@/api/customer'
+import axios from 'axios'
 
 export default {
   name: 'Shops',
@@ -21,12 +27,14 @@ export default {
   },
   methods: {
     getallShops() {
-      customerApi.getShops().then(res => {
+      axios.post('/shop/getShops').then(res => {
         this.shops = res.data
+        console.log(this.shops)
       })
     },
-    handleClick(id) {
-      this.$router.push('/shops/${id}')
+    handleClick(shopId) {
+      this.$store.commit('user/SET_SHOPID', shopId)
+      this.$router.push('/customer/shopDetails')
     }
   }
 }
