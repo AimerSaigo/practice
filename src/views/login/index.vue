@@ -41,7 +41,8 @@
         </span>
       </el-form-item>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleCustomerLogin">Login</el-button>
+      <el-button :loading="loading" type="primary" style="width:40%;margin-bottom:30px;" @click.native.prevent="handleCustomerLogin">Login</el-button>
+      <el-button :loading="loading" type="primary" style="width:40%;margin-bottom:30px;margin-left: 20%" @click.native.prevent="handleBusinessLogin">Login</el-button>
 
       <div class="tips">
         <span style="margin-right:20px;">username: admin</span>
@@ -53,6 +54,9 @@
 </template>
 
 <script>
+import axios from 'axios'
+import qs from 'qs'
+
 export default {
   name: 'Login',
   data() {
@@ -82,7 +86,7 @@ export default {
       },
       loading: false,
       passwordType: 'password',
-      redirect: undefined
+      redirect: '/customer/shops'
     }
   },
   watch: {
@@ -104,21 +108,47 @@ export default {
         this.$refs.password.focus()
       })
     },
+    // handleCustomerLogin() {
+    //   this.$refs.loginForm.validate(valid => {
+    //     if (valid) {
+    //       this.loading = true
+    //       this.$store.commit('user/SET_ROLE', 'customer')
+    //       console.log(2)
+    //       this.$store.dispatch('user/loginCustomer', this.loginForm).then(() => {
+    //         console.log(1)
+    //         this.$router.push({ path: this.redirect || '/' })
+    //         this.loading = false
+    //       }).catch(() => {
+    //         this.loading = false
+    //       })
+    //     } else {
+    //       console.log('error submit!!')
+    //       return false
+    //     }
+    //   })
+    // },
     handleCustomerLogin() {
-      this.$refs.loginForm.validate(valid => {
-        if (valid) {
-          this.loading = true
-          this.$store.commit('user/SET_ROLE', 'customer')
-          this.$store.dispatch('user/login', this.loginForm).then(() => {
-            this.$router.push({ path: this.redirect || '/' })
-            this.loading = false
-          }).catch(() => {
-            this.loading = false
-          })
-        } else {
-          console.log('error submit!!')
-          return false
-        }
+      this.$store.commit('user/SET_ROLE', 'customer')
+      axios.post('customer/login', qs.stringify({
+        customerName: this.loginForm.username,
+        password: this.loginForm.password
+      })).then(res => {
+        this.$store.commit('user/SET_CUSTOMERNAME', this.loginForm.username)
+        this.$store.commit('user/SET_CUSTOMERID', res.data.id)
+        console.log(4)
+        this.$router.push('/customer')
+        console.log(5)
+      })
+    },
+    handleBusinessLogin() {
+      this.$store.commit('user/SET_ROLE', 'business')
+      axios.post('business/login', qs.stringify({
+        businessName: this.loginForm.username,
+        password: this.loginForm.password
+      })).then(res => {
+        this.$store.commit('user/SET_BUSINESSNAME', this.loginForm.username)
+        this.$store.commit('user/SET_BUSINESSID', res.data.id)
+        this.$router.push('/business')
       })
     }
   }
