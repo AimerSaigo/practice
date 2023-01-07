@@ -7,8 +7,8 @@ import { asyncRoutes, constantRoutes } from '@/router'
  */
 //匹配权限
 function hasPermission(roles, route) {
-  if (route.meta && route.meta.roles) {
-    return roles.some(role => route.meta.roles.includes(role))
+  if (route.meta && route.meta.role) {
+    return route.meta.role.includes(roles)
   } else {
     return true
   }
