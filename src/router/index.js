@@ -59,31 +59,25 @@ export const asyncRoutes = [
         path: 'shops',
         name: 'Shops',
         component: () => import('@/views/customer/shops'),
-        meta: { title: '所有店铺', icon: 'dashboard' },
-        children: [{
-          path: ':id',
-          name: 'ShopDetails',
-          component: () => import('@/views/customer/shopDetails'),
-          meta: { title: '店铺详情' }
-        }]
+        meta: { title: '所有店铺', icon: 'dashboard', role: ['customer'] }
+      },
+      {
+        path: 'shopDetails',
+        name: 'ShopDetails',
+        component: () => import('@/views/customer/shopDetails'),
+        meta: { title: '店铺详情', role: ['customer'] }
       },
       {
         path: 'orders',
         name: 'Orders',
         component: () => import('@/views/customer/orders'),
-        meta: { title: '订单列表', icon: 'dashboard' },
-        children: [{
-          path: ':id',
-          name: 'OrderDetails',
-          component: () => import('@/views/customer/orderDetails'),
-          meta: { title: '订单详情' }
-        }]
+        meta: { title: '订单列表', icon: 'dashboard', role: ['customer'] }
       },
       {
-        path: 'dashboard',
-        name: 'Dashboard',
-        component: () => import('@/views/dashboard/index'),
-        meta: { title: 'Dashboard', icon: 'dashboard' }
+        path: 'orderDetails',
+        name: 'OrderDetails',
+        component: () => import('@/views/customer/orderDetails'),
+        meta: { title: '订单详情', role: ['customer'] }
       }
     ]
   },
@@ -99,28 +93,30 @@ export const asyncRoutes = [
         path: 'shops',
         name: 'Shops',
         component: () => import('@/views/dashboard/index'),
-        meta: { title: 'Dashboard', icon: 'dashboard' },
-        children: [{
-          path: ':id',
-          name: 'ShopDetails',
-          component: () => import('@/views/dashboard/index'),
-          children: [{
-            path: 'orders',
-            name: 'Orders',
-            component: () => import('@/views/dashboard/index'),
-            meta: { title: 'Dashboard', icon: 'dashboard' }
-          }]
-        }]
+        meta: { title: 'Dashboard', icon: 'dashboard', role: ['business'] }
+      },
+      {
+        path: 'shopDetails',
+        name: 'ShopDetails',
+        component: () => import('@/views/dashboard/index'),
+        meta: { role: ['business'] }
+      },
+      {
+        path: 'orders',
+        name: 'Orders',
+        component: () => import('@/views/dashboard/index'),
+        meta: { title: 'Dashboard', icon: 'dashboard', role: ['business'] }
       }
     ]
   },
+
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
 const createRouter = () => new Router({
   // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
-  routes: constantRoutes
+  routes: [...constantRoutes, ...asyncRoutes]
 })
 
 const router = createRouter()
