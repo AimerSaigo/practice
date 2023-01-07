@@ -4,12 +4,13 @@
 
 <script>
 import businessApi from '@/api/business'
+import axios from 'axios'
 
 export default {
   name: 'ShopDetails',
   data() {
     return {
-      businessId: '',
+      businessId: this.$store.getters.businessId,
       shopId: '',
       goodId: '',
       name: '',
@@ -23,16 +24,19 @@ export default {
   },
   method: {
     getallGoods() {
-      businessApi.getGoods(this.$store.state.shopId).then(res => {
+      console.log(Number(this.shopId))
+      axios.post('/shop/getGoods', Number(this.shopId)).then(res => {
         this.goods = res.data
+        console.log(this.goods)
+        console.log(res.data)
       })
     },
     handleCreateClick() {
-      businessApi.addGoods(this.businessId, this.name, this.price)
+      axios.post('/goods/addGoods', this.businessId, this.name, this.price)
       this.getallGoods()
     },
-    handlePutClick() {
-      businessApi.putGoods(this.goodId, this.shopId)
+    handlePutClick(goodId) {
+      axios.post('/goods/putGoods', goodId, this.shopId)
       this.getallGoods()
     }
   }
